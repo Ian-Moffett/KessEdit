@@ -78,7 +78,7 @@ int main(int argc, char* argv[]) {
     getWinSize(&rows, &cols);
     refreshScr(true);
 
-    char* msg = "\033[38;5;202m ";
+    char* msg = "\033[38;5;255m ";
     write(STDIN_FILENO, msg, strlen(msg));
 
     while (1) { 

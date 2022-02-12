@@ -45,7 +45,7 @@ char processKey(char c) {
                 fprintf(fp, "%s\n", editorOp.buffer.contents);
                 fclose(fp);
 
-                char* writtenMsg = "\033[38;5;202mBuffer written to disk.";
+                char* writtenMsg = "\033[38;5;255mBuffer written to disk.";
                 char* blank = "                                     ";
                 write(STDOUT_FILENO, writtenMsg, strlen(writtenMsg));
                 getkey();
@@ -56,7 +56,7 @@ char processKey(char c) {
                 int row, col;
                 getWinSize(&row, &col);
                 _move_cursor(15, col);
-                char* writtenMsg = "\033[38;5;202mCannot write empty buffer!";
+                char* writtenMsg = "\033[38;5;255mCannot write empty buffer!";
                 char* blank = "                                     ";
                 write(STDOUT_FILENO, writtenMsg, strlen(writtenMsg));
                 getkey();
@@ -80,7 +80,7 @@ char processKey(char c) {
                         ++editorOp.cy;
                     }
 
-                    editorOp.cx = 6;
+                    editorOp.cx = 7;
 
                     _move_cursor(editorOp.cx, editorOp.cy);
 
@@ -101,15 +101,17 @@ char processKey(char c) {
                         _move_cursor(editorOp.cx, editorOp.cy);
                         write(STDOUT_FILENO, " ", 1);
                         _move_cursor(editorOp.cx, editorOp.cy);
-                    } else if (editorOp.cy > 1) {
+                    } else if (editorOp.cy > 2) {
                         --editorOp.cy;
                         editorOp.cx = editorOp.lastLines[editorOp.llidx - 2];
                         editorOp.lastLines = (unsigned long*)realloc(editorOp.lastLines, sizeof(unsigned long) * (editorOp.llidx - 1));
                         --editorOp.llidx;
                         _move_cursor(editorOp.cx, editorOp.cy);
                     }
-
-                    buffer_pop(&editorOp.buffer);
+                    
+                    if (editorOp.buffer.size > 0) {
+                        buffer_pop(&editorOp.buffer);
+                    }
 
                     continue;
             }
@@ -137,7 +139,7 @@ void refreshScr(bool drawRows) {
     if (drawRows) {
         for (int i = 0; i < 24; ++i, ++editorOp.line) {
             char rowbuf[20];
-            snprintf(rowbuf, sizeof(rowbuf), "%d~\r\n", editorOp.line);
+            snprintf(rowbuf, sizeof(rowbuf), "\033[38;5;255m%d~\r\n", editorOp.line);
             write(STDOUT_FILENO, rowbuf, strlen(rowbuf));
         }
 
